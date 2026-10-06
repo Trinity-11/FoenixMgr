@@ -8,6 +8,7 @@ CMD_STOP_CPU = 0x20
 CMD_START_CPU = 0x21
 CMD_ENTER_DEBUG = 0x80
 CMD_EXIT_DEBUG = 0x81
+CMD_SYSTEM_RESET = 0x83         # A2560Me (debug port revision 6 or later): full board reset, no FPGA reload
 CMD_BOOT_RAM = 0x90
 CMD_BOOT_FLASH = 0x91
 CMD_REVISION = 0xFE

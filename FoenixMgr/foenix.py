@@ -55,6 +55,12 @@ class FoenixDebugPort:
         This command will not trigger a reset of the CPU."""
         self.transfer(constants.CMD_START_CPU, 0, 0, 0)
 
+    def system_reset(self):
+        """Send the command to reset the whole A2560Me board (debug port revision 6 or later).
+        The FPGA answers first, then holds the board in reset for about 1.2 seconds and boots normally.
+        The FPGA itself is not reloaded."""
+        self.transfer(constants.CMD_SYSTEM_RESET, 0, 0, 0)
+
     def erase_flash(self):
         """Send the command to have the C256 Foenix erase its flash memory."""
         self.transfer(constants.CMD_ERASE_FLASH, 0, 0, 0)

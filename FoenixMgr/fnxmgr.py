@@ -86,6 +86,25 @@ def start_cpu(port):
     finally:
         c256.close()
 
+def system_reset(port):
+    """Reset the whole A2560Me board through its debug port (debug port revision 6 or later)."""
+    c256 = foenix.FoenixDebugPort()
+    try:
+        c256.open(port)
+        # The revision query needs no debug mode, so the running system is not disturbed if the
+        # bitstream is too old to know the reset command.
+        rev = c256.get_revision()
+        if rev < 6:
+            print("The debug port (revision {:X}) does not support the system reset (needs revision 6 or later).".format(rev))
+            sys.exit(1)
+        c256.system_reset()
+        if is_stopped():
+            clear_stop_indicator()
+        if not quiet_mode:
+            print("System reset... the board restarts in about 2 seconds.")
+    finally:
+        c256.close()
+
 def revision(port):
     """Get the version code for the debug port."""
     c256 = foenix.FoenixDebugPort()
@@ -729,6 +748,9 @@ parser.add_argument("--stop", action="store_true", dest="stop",
 parser.add_argument("--start", action="store_true", dest="start",
                     help="Restart the CPU after a STOP (F256 only).")
 
+parser.add_argument("--reset", action="store_true", dest="system_reset",
+                    help="A2560Me only (debug port revision 6 or later): reset the whole board (no FPGA reload).")
+
 parser.add_argument("--key", metavar="KEY", dest="keyboard_keys", nargs="+",
                     help="Inject named keys or single characters through the K2 optical keyboard.")
 
@@ -767,6 +789,9 @@ try:
         elif options.start:
             start_cpu(options.port)
             print("Starting the CPU...")
+
+        elif options.system_reset:
+            system_reset(options.port)
 
         elif options.keyboard_keys:
             try:
